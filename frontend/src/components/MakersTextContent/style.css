@@ -1,0 +1,44 @@
+.MAKERS-TEXT-CONTENT {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  left: 20px;
+  position: relative;
+  top: 20px;
+  width: 473px;
+}
+
+.MAKERS-TEXT-CONTENT .text-wrapper {
+  align-self: stretch;
+  color: #0a2942;
+  font-family: "Inter", Helvetica;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+}
+
+.MAKERS-TEXT-CONTENT .learn-how-to-make {
+  align-self: stretch;
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: normal;
+  position: relative;
+}
+
+.MAKERS-TEXT-CONTENT .makers-is-a-figma {
+  align-self: stretch;
+  color: #0a2942;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: relative;
+}

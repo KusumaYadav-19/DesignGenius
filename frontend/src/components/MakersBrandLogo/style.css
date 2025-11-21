@@ -1,0 +1,69 @@
+.MAKERS-BRAND-LOGO {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  left: 20px;
+  position: relative;
+  top: 20px;
+}
+
+.MAKERS-BRAND-LOGO .making-it-logo {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  height: 30px;
+  position: relative;
+}
+
+.MAKERS-BRAND-LOGO .icon {
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+  width: 34px;
+}
+
+.MAKERS-BRAND-LOGO .rectangle {
+  background-color: #ffe45e;
+  height: 4px;
+  left: -1px;
+  position: absolute;
+  top: 5px;
+  transform: rotate(-45deg);
+  width: 16px;
+}
+
+.MAKERS-BRAND-LOGO .div {
+  background-color: #5eabe3;
+  height: 4px;
+  left: 6px;
+  position: absolute;
+  top: 6px;
+  transform: rotate(-45deg);
+  width: 20px;
+}
+
+.MAKERS-BRAND-LOGO .rectangle-2 {
+  background-color: #ff6392;
+  height: 4px;
+  left: 12px;
+  position: absolute;
+  top: 8px;
+  transform: rotate(-45deg);
+  width: 24px;
+}
+
+.MAKERS-BRAND-LOGO .text-wrapper-2 {
+  color: #0a2942;
+  font-family: "Inter", Helvetica;
+  font-size: 24px; /* Increased from 18px to 24px */
+  font-weight: 600; /* Increased from 500 to 600 for bolder look */
+  letter-spacing: 0;
+  line-height: 36px; /* Increased from 30px to match new font size */
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}

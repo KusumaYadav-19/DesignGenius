@@ -1,0 +1,108 @@
+.design-system {
+  background-color: #ffffff;
+  min-height: 832px;
+  min-width: 1280px;
+  position: relative;
+  width: 100%;
+}
+
+.design-system .MAKERS-TEXT-CONTENT-instance {
+  left: 110px !important;
+  position: absolute !important;
+  top: 209px !important;
+  width: 480px !important;
+}
+
+.design-system .MAKERS-BUTTON-instance {
+  background-color: #0069ff !important;
+  border: unset !important;
+  border-color: unset !important;
+  left: 110px !important;
+  position: absolute !important;
+  top: 487px !important;
+}
+
+.design-system .design-component-instance-node {
+  color: #ffffff !important;
+}
+
+.design-system .MAKERS-NAVIGATION {
+  align-items: center;
+  background-color: #ffffff;
+  display: inline-flex;
+  height: 94px;
+  justify-content: center;
+  left: 47px;
+  padding: 0px 20px;
+  position: absolute;
+  top: 0;
+}
+
+.design-system .container {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 127px;
+  padding: 24px 0px;
+  position: relative;
+}
+
+.design-system .left {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 32px;
+  position: relative;
+}
+
+.design-system .MAKERS-BRAND-LOGO-instance {
+  flex: 0 0 auto !important;
+  left: unset !important;
+  top: unset !important;
+}
+
+.design-system .MAKERS-BRAND-LOGO-2 {
+  background-color: #0069ff !important;
+}
+
+.design-system .image {
+  height: 406px;
+  left: 613px;
+  position: absolute;
+  top: 209px;
+  width: 561px;
+}
+
+.design-system .img {
+  height: 406px;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 557px;
+}
+
+.design-system .text-wrapper-3 {
+  color: #1b96c4;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  left: 27px;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: absolute;
+  top: 53px;
+  white-space: nowrap;
+}
+
+.design-system .design-system-audit {
+  color: #1b96c4;
+  font-family: "Inter", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  left: 27px;
+  letter-spacing: 0;
+  line-height: 21px;
+  position: absolute;
+  top: 77px;
+}

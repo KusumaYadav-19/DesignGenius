@@ -1,0 +1,157 @@
+.makers-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin: 20px auto; /* Center the card */
+  width: fit-content; /* Size to content */
+  min-width: 400px; /* Minimum width for usability */
+  max-width: 90vw; /* Responsive max width */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.makers-main.centered {
+  text-align: center;
+}
+
+.makers-main-content {
+  max-width: 812px; /* Reduced for more compact card */
+  width: 100%;
+  min-width: 350px; /* Ensure inputs fit properly */
+}
+
+.makers-main-title {
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #1a1a1a; /* Fallback for browsers that don't support gradient text */
+  margin-bottom: 30px;
+  line-height: 1.1;
+  white-space: normal; /* Normal text wrapping */
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: gradientShift 4s ease-in-out infinite;
+  text-align: center;
+  display: block;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.makers-main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center; /* Center all form elements */
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center; /* Center labels and inputs */
+  width: 100%;
+  max-width: 400px; /* Limit the width and center the sections */
+}
+
+.form-label {
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+  text-align: center; /* Center the labels */
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  max-width: 350px; /* Consistent width for both inputs */
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0069ff;
+  box-shadow: 0 0 0 3px rgba(0, 105, 255, 0.1);
+}
+
+.upload-button {
+
+  padding: 14px 28px;
+  background-color: #0069ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: center;
+}
+
+.upload-button:hover {
+  background-color: #0056d2;
+}
+
+.upload-button:active {
+  background-color: #004bb8;
+}
+
+/* Token Input Styling */
+.token-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 350px; /* Match the form input width */
+}
+
+.token-input {
+  padding-right: 50px; /* Make space for the toggle button */
+}
+
+.toggle-token-visibility {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-token-visibility:hover {
+  background-color: #f3f4f6;
+}
+
+.toggle-token-visibility:focus {
+  outline: none;
+  background-color: #e5e7eb;
+}

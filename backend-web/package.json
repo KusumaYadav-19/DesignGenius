@@ -1,0 +1,49 @@
+{
+  "name": "backend-web",
+  "version": "1.0.0",
+  "description": "Figma Design Analyzer Web Backend - URL-based analysis",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-api": "node test-api.js"
+  },
+  "keywords": [
+    "figma",
+    "mcp",
+    "design-system",
+    "ai",
+    "web"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "ajv": "^8.17.1",
+    "body-parser": "^2.2.0",
+    "chroma-js": "^3.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "figma-api": "^2.1.0-beta",
+    "fs-extra": "^11.3.2",
+    "jszip": "^3.10.1",
+    "openai": "^6.9.1",
+    "pg": "^8.13.1",
+    "pdfkit": "^0.17.2",
+    "tinycolor2": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.10",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

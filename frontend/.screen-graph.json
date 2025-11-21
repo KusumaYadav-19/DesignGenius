@@ -1,0 +1,14 @@
+{
+  "nodes": [
+    {
+      "id": "src/screens/DesignSystem/DesignSystem.jsx",
+      "label": "DesignSystem",
+      "routes": [
+        "/"
+      ],
+      "dataModelId": "337:579",
+      "isRoot": true
+    }
+  ],
+  "edges": []
+}

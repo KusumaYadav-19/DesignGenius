@@ -1,0 +1,58 @@
+.MAKERS-BUTTON {
+  all: unset;
+  align-items: center;
+  border-radius: 10px;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 3px 28px;
+  position: relative;
+  top: 20px;
+  align-self: center;
+}
+
+.MAKERS-BUTTON .button {
+  font-family: "Inter", Helvetica;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 40px;
+  margin-top: -2.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+
+}
+
+.MAKERS-BUTTON.secondary {
+  background-color: #ffffff;
+  border: 2px solid;
+  border-color: #0249ff;
+}
+
+.MAKERS-BUTTON.primary {
+  background-color: #0069ff;
+}
+
+.MAKERS-BUTTON.hover {
+  box-shadow: 0px 4px 16px #0000001a;
+  left: 155px;
+}
+
+.MAKERS-BUTTON.default.secondary {
+  left: 290px;
+}
+
+.MAKERS-BUTTON.default.primary {
+  left: 40px;
+}
+
+.MAKERS-BUTTON.primary .button {
+  color: #ffffff;
+}
+
+.MAKERS-BUTTON.secondary .button {
+  color: #0249ff;
+}

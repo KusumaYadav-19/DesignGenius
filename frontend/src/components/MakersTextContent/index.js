@@ -1,0 +1,1 @@
+export { MakersTextContent } from "./MakersTextContent";
