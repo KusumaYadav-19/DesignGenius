@@ -279,6 +279,7 @@ app.post('/api/analyse-page', async (req, res) => {
       sessionId: string;
       timestamp: string;
       fileKey: string;
+      fileName: string;
       pageId: string;
       pageName: string;
       analysis: {
@@ -333,6 +334,7 @@ app.post('/api/analyse-page', async (req, res) => {
       sessionId,
       timestamp: new Date().toISOString(),
       fileKey,
+      fileName: fileInfo.name,
       pageId,
       pageName: page.name,
       analysis: {
@@ -534,7 +536,7 @@ app.get('/api/sessions', (req, res) => {
         };
 
         // Get session metadata if available
-        let metadata: { timestamp?: string; fileKey?: string; pageName?: string } = {};
+        let metadata: { timestamp?: string; fileKey?: string; fileName?: string; pageName?: string } = {};
         if (files.includes('analysis-results.json')) {
           try {
             const analysisData = JSON.parse(
@@ -543,6 +545,7 @@ app.get('/api/sessions', (req, res) => {
             metadata = {
               timestamp: analysisData.timestamp,
               fileKey: analysisData.fileKey,
+              fileName: analysisData.fileName,
               pageName: analysisData.pageName,
             };
           } catch (e) {

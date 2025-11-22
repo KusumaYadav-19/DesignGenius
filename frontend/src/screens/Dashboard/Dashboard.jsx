@@ -116,6 +116,14 @@ export const Dashboard = () => {
     return content;
   };
 
+  // Function to get display name for session with numbering
+  const getSessionDisplayName = (session, index) => {
+    // Number sessions sequentially: Design 1, Design 2, Design 3, etc.
+    // Sessions are sorted newest first, so newest gets "Design 1"
+    const sessionNumber = index + 1;
+    return `Design ${sessionNumber}`;
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-navigation">
@@ -152,18 +160,19 @@ export const Dashboard = () => {
             {!selectedSession ? (
               <>
                 <div className="dashboard-header">
-                  <h1 className="dashboard-title">Analysis Sessions</h1>
+                  <h1 className="dashboard-title">Overview</h1>
                 </div>
                 <div className="dashboard-sessions-grid">
-                  {sessions.map((session) => (
+                  {sessions.map((session, index) => (
                     <div
                       key={session.sessionId}
                       className="dashboard-session-card"
                       onClick={() => handleSessionClick(session.sessionId)}
                     >
                       <div className="session-card-content">
-                        <p className="session-label">Session</p>
-                        <h3 className="session-number">{session.sessionId.replace('session-', '')}</h3>
+                        <h3 className="session-number">
+                          {getSessionDisplayName(session, index)}
+                        </h3>
                       </div>
                     </div>
                   ))}
@@ -183,7 +192,16 @@ export const Dashboard = () => {
                   >
                     ← Back to Sessions
                   </button>
-                  <h2 className="files-view-title">Files for {selectedSession}</h2>
+                  <h2 className="files-view-title">
+                    Files for {(() => {
+                      const selectedSessionData = sessions.find(s => s.sessionId === selectedSession);
+                      if (selectedSessionData) {
+                        const index = sessions.findIndex(s => s.sessionId === selectedSession);
+                        return getSessionDisplayName(selectedSessionData, index);
+                      }
+                      return selectedSession;
+                    })()}
+                  </h2>
                 </div>
                 
                 {sessionFiles && (

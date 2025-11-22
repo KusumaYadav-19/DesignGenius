@@ -72,7 +72,7 @@ Get file information and list of pages.
 {
   "success": true,
   "fileKey": "abc123",
-  "fileName": "My Design File",
+  "fileName": "Design",
   "pages": [
     {
       "id": "page-id-1",
