@@ -3,7 +3,7 @@
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 130px;
+    gap: 80px;
     min-height: 832px;
     min-width: 1280px;
     overflow: hidden;
@@ -95,7 +95,7 @@
 
 /* Main Text */
 .main-screen .main-screen-main-text {
-    font-size: 38px !important;
+    font-size: 32px !important;
     font-weight: 700 !important;
     line-height: 1.1 !important;
     white-space: normal !important; /* Normal text wrapping */

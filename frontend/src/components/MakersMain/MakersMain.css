@@ -3,12 +3,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px;
+  padding: 50px 80px; /* Larger padding for bigger card */
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   margin: 20px auto; /* Center the card */
   width: fit-content; /* Size to content */
-  min-width: 400px; /* Minimum width for usability */
+  min-width: 600px; /* Larger minimum width for bigger card */
   max-width: 90vw; /* Responsive max width */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -28,7 +28,7 @@
 
 .makers-main-title {
   font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-size: 200% 200%;
@@ -36,7 +36,8 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: #1a1a1a; /* Fallback for browsers that don't support gradient text */
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  margin-top: -30px; /* Pull text up even more */
   line-height: 1.1;
   white-space: normal; /* Normal text wrapping */
   letter-spacing: -0.02em;
