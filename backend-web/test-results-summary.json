@@ -1,8 +1,8 @@
 {
-  "sessionId": "session-1763794994699",
-  "timestamp": "2025-11-22T07:03:15.285Z",
-  "fileKey": "HehcMGOE2igBAzA1PadVWT",
-  "pageName": "hakathon 2025",
+  "sessionId": "session-1763797491035",
+  "timestamp": "2025-11-22T07:44:51.868Z",
+  "fileKey": "4QSecRq34qGXFREVt4rWxD",
+  "pageName": "Page 1",
   "analysis": {
     "summary": "AI analysis unavailable. Please set OPENAI_API_KEY environment variable.",
     "recommendations": [
@@ -17,15 +17,15 @@
   },
   "tokensCount": {
     "colors": 10,
-    "typography": 11,
-    "spacing": 7,
-    "borderRadius": 4
+    "typography": 4,
+    "spacing": 0,
+    "borderRadius": 3
   },
   "componentsCount": 0,
   "accessibilityScore": 0,
   "designKit": {
     "title": "Guide Lines",
-    "typographyCount": 11
+    "typographyCount": 4
   },
   "sop": {
     "title": "SOP",
@@ -33,5 +33,5 @@
     "featuresCount": 1,
     "lldDiagramsCount": 2
   },
-  "outputPath": "/Users/kushhhyadav/Desktop/hackathon/backend-web/output/session-1763794994699"
+  "outputPath": "/Users/kushhhyadav/Desktop/hackathon/backend-web/output/session-1763797491035"
 }

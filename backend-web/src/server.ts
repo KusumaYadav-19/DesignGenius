@@ -22,6 +22,7 @@ import { generateDesignTokens } from './tokens-generator.js';
 import { generateCode } from './code-generator.js';
 import { generateSOP } from './sop-generator.js';
 import { generateDesignKit } from './designkit-generator.js';
+import { generateFeatureBreakdown } from './feature-breakdown-generator.js';
 import {
   analyzeLayers,
   detectComponents,
@@ -263,6 +264,16 @@ app.post('/api/analyse-page', async (req, res) => {
       sop.fullDocument
     );
 
+    console.log('8. Generating Feature Breakdown document');
+    const featureBreakdown = await generateFeatureBreakdown(
+      sop,
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      nodes
+    );
+
     const result: {
       success: boolean;
       sessionId: string;
@@ -310,6 +321,11 @@ app.post('/api/analyse-page', async (req, res) => {
         gridAndLayout: any;
         fullDocument: string;
       };
+      featureBreakdown: {
+        title: string;
+        features: any[];
+        fullDocument: string;
+      };
       outputPath?: string;
       files?: Record<string, string>;
     } = {
@@ -350,6 +366,11 @@ app.post('/api/analyse-page', async (req, res) => {
         colorSystem: designKit.colorSystem,
         gridAndLayout: designKit.gridAndLayout,
         fullDocument: designKit.fullDocument,
+      },
+      featureBreakdown: {
+        title: featureBreakdown.title,
+        features: featureBreakdown.features,
+        fullDocument: featureBreakdown.fullDocument,
       },
     };
 
@@ -432,6 +453,13 @@ app.post('/api/analyse-page', async (req, res) => {
         'utf-8'
       );
       
+      // Save Feature Breakdown document as markdown
+      fs.writeFileSync(
+        path.join(outputPath, 'feature-breakdown.md'),
+        featureBreakdown.fullDocument,
+        'utf-8'
+      );
+      
       console.log(`Results saved to: ${outputPath}`);
       
       // Add output path to response
@@ -447,6 +475,7 @@ app.post('/api/analyse-page', async (req, res) => {
         components: 'components.json',
         namingSuggestions: 'naming-suggestions.json',
         designKit: 'DesignKit.md',
+        featureBreakdown: 'feature-breakdown.md',
       };
     } catch (fileError) {
       console.error('Error saving files:', fileError);
