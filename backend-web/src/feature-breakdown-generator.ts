@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import OpenAI from 'openai';
 import type { DesignTokens } from './tokens-generator.js';
 import type { AnalysisResult, AccessibilityReport, ComponentDetection } from './mcp-agent.js';

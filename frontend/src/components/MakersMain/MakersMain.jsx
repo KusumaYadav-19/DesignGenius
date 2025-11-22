@@ -156,6 +156,14 @@ export const MakersMain = ({
             >
               {loading ? 'Analyzing...' : MAKERSButtonText}
             </button>
+            {loading && (
+              <div className="linear-progress-container">
+                <div className="linear-progress-bar">
+                  <div className="linear-progress-fill"></div>
+                </div>
+                <p className="progress-text">Analyzing your Figma design...</p>
+              </div>
+            )}
           </div>
           {error && (
             <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>

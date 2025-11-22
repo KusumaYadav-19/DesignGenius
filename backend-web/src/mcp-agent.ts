@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import OpenAI from 'openai';
 import type { FigmaNode, ParsedDesign } from './figma-parser.js';
 import type { DesignTokens } from './tokens-generator.js';
@@ -256,7 +257,9 @@ Format as JSON array:
 }
 
 export async function generateAccessibilityReport(nodes: FigmaNode[], tokens: DesignTokens): Promise<AccessibilityReport> {
-  if (!openai) {
+  // Check API key at runtime to ensure it's loaded from environment
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
     console.warn('OpenAI API key not set, returning default accessibility report');
     return {
       score: 0,
@@ -269,6 +272,9 @@ export async function generateAccessibilityReport(nodes: FigmaNode[], tokens: De
       summary: 'Accessibility analysis requires OpenAI API key configuration.',
     };
   }
+
+  // Re-initialize OpenAI client if it wasn't initialized at module load time
+  const client = openai || new OpenAI({ apiKey });
   
   try {
     const nodesData = nodes.slice(0, 20).map(n => ({
@@ -308,7 +314,7 @@ Format as JSON:
   "summary": "string"
 }`;
 
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
