@@ -1,220 +1,386 @@
+import OpenAI from 'openai';
 import type { DesignTokens } from './tokens-generator.js';
+import type { AnalysisResult, AccessibilityReport, ComponentDetection } from './mcp-agent.js';
+import type { FigmaNode } from './figma-parser.js';
+
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null;
 
 export interface SOPDocument {
-  versionControl: string;
-  namingRules: string;
-  designToDevSteps: string;
-  complianceNotes: string;
+  title: string;
+  userJourney: UserJourneySection;
+  featureBreakout: FeatureBreakoutSection;
+  lld: LLDSection;
   fullDocument: string;
 }
 
-export function generateSOP(tokens: DesignTokens): SOPDocument {
-  
-  const versionControl = `# Version Control Standards
+export interface UserJourneySection {
+  userStories: string[];
+}
 
-## Design Token Versioning
-- All design tokens must be versioned using semantic versioning (MAJOR.MINOR.PATCH)
-- MAJOR: Breaking changes to token structure or naming
-- MINOR: New tokens added, non-breaking changes
-- PATCH: Bug fixes, corrections
+export interface FeatureBreakoutSection {
+  description: string;
+  features: Feature[];
+}
 
-## Git Workflow
-1. Create feature branch from main: \`git checkout -b feature/token-updates\`
-2. Make changes to design tokens
-3. Update version in package.json
-4. Commit with conventional commits: \`feat(tokens): add new color tokens\`
-5. Create pull request for review
-6. Merge to main after approval
+export interface Feature {
+  name: string;
+  description: string;
+  components: string[];
+  designTokens: string[];
+  accessibilityNotes: string[];
+}
 
-## Token File Structure
-\`\`\`
-tokens/
-  ├── colors.json
-  ├── typography.json
-  ├── spacing.json
-  └── borderRadius.json
-\`\`\`
+export interface LLDSection {
+  description: string;
+  diagrams: LLDDiagram[];
+}
 
-## Change Log Requirements
-- All token changes must be documented in CHANGELOG.md
-- Include migration guide for breaking changes
-- Document deprecated tokens with removal timeline`;
+export interface LLDDiagram {
+  journeyName: string;
+  steps: LLDStep[];
+  diagram: string; // Text-based diagram representation
+}
 
-  const namingRules = `# Naming Conventions
+export interface LLDStep {
+  stepNumber: number;
+  action: string;
+  component: string;
+  state: string;
+  dataFlow: string;
+}
 
-## Color Tokens
-- Format: \`{category}-{index}-{variant}\`
-- Categories: primary, secondary, neutral, semantic
-- Examples: \`primary-1\`, \`neutral-2-dark\`, \`semantic-error\`
+export async function generateSOP(
+  tokens: DesignTokens,
+  analysis: AnalysisResult,
+  accessibilityReport: AccessibilityReport,
+  components: ComponentDetection[],
+  nodes: FigmaNode[]
+): Promise<SOPDocument> {
+  if (!openai) {
+    console.warn('OpenAI API key not set, returning default SOP');
+    return generateDefaultSOP(tokens, components);
+  }
 
-## Typography Tokens
-- Format: \`{size}-{weight}\`
-- Sizes: heading, subheading, body-large, body, body-small, caption
-- Weights: regular, medium, semibold, bold
-- Examples: \`heading-bold\`, \`body-regular\`, \`caption-medium\`
+  try {
+    // Prepare context from all reference files
+    const context = {
+      designTokens: {
+        colors: tokens.colors,
+        typography: tokens.typography,
+        spacing: tokens.spacing,
+        borderRadius: tokens.borderRadius,
+      },
+      analysis: {
+        summary: analysis.summary,
+        recommendations: analysis.recommendations,
+        issues: analysis.issues,
+        strengths: analysis.strengths,
+      },
+      accessibility: {
+        score: accessibilityReport.score,
+        issues: accessibilityReport.issues,
+        summary: accessibilityReport.summary,
+      },
+      components: components.map(c => ({
+        name: c.componentName,
+        description: c.description,
+        props: c.props,
+        nodeIds: c.nodeIds,
+      })),
+      designStructure: {
+        nodeCount: nodes.length,
+        nodeTypes: [...new Set(nodes.map(n => n.type))],
+        topLevelNodes: nodes.slice(0, 10).map(n => ({
+          id: n.id,
+          name: n.name,
+          type: n.type,
+        })),
+      },
+    };
 
-## Spacing Tokens
-- Format: \`{size}-{index}\`
-- Sizes: xs, sm, md, lg, xl, xxl
-- Examples: \`xs-0\`, \`md-1\`, \`xl-2\`
+    const prompt = `You are a technical documentation expert creating a Statement of Procedure (SOP) document. Analyze the provided reference data from a Figma design analysis and create comprehensive documentation.
 
-## Border Radius Tokens
-- Format: \`{size}-{index}\`
-- Sizes: none, sm, md, lg, xl
-- Examples: \`sm-0\`, \`md-1\`, \`lg-2\`
+Reference Data Provided:
+- Design Tokens: ${tokens.colors.length} colors, ${tokens.typography.length} typography tokens, ${tokens.spacing.length} spacing tokens, ${tokens.borderRadius.length} border radius tokens
+- Analysis: ${analysis.summary.substring(0, 200)}...
+- Components: ${components.length} components identified
+- Accessibility: Score ${accessibilityReport.score}/100 with ${accessibilityReport.issues.length} issues
+- Design Structure: ${nodes.length} nodes with types: ${[...new Set(nodes.map(n => n.type))].join(', ')}
 
-## Component Naming
-- Use PascalCase for component names
-- Use descriptive names: \`ButtonPrimary\` not \`Btn1\`
-- Include purpose: \`CardProduct\`, \`ModalConfirm\`
+Full Context:
+${JSON.stringify(context, null, 2)}
 
-## File Naming
-- Components: \`ComponentName.tsx\`
-- Tokens: \`tokens.json\` or \`tokens.ts\`
-- Utilities: \`utilityName.ts\`
-- Tests: \`ComponentName.test.tsx\``;
+Create an SOP document following this exact structure:
 
-  const designToDevSteps = `# Design to Development Workflow
+Title: "SOP"
 
-## Step 1: Design Review
-1. Review Figma design for completeness
-2. Identify all components and their states
-3. Document interactions and animations
-4. Note accessibility requirements
+1. User Journey
+   - Generate 2-3 user stories (2-3 lines each) based on the components, design structure, and features identified
+   - Each user story should describe a typical user interaction with the design
+   - Base stories on component descriptions, design structure, and analysis insights
+   - Format as an array of user story strings
 
-## Step 2: Token Extraction
-1. Run design analysis tool
-2. Extract all design tokens (colors, typography, spacing)
-3. Review and refine token names
-4. Validate token values match design system
+2. Feature Breakout
+   - Break down all features identified from the Figma design
+   - For each feature, provide:
+     * name: Feature name
+     * description: What the feature does
+     * components: Array of component names that implement this feature
+     * designTokens: Array of relevant design token names used
+     * accessibilityNotes: Array of accessibility considerations for this feature
+   - Base features on:
+     * Component descriptions and props
+     * Design structure and node types
+     * Analysis recommendations and strengths
+     * Accessibility report issues and recommendations
 
-## Step 3: Component Breakdown
-1. Identify reusable components
-2. Document component hierarchy
-3. List required props and states
-4. Define component API
+3. LLD (Low Level Diagram)
+   - Create low-level diagrams for each user journey identified
+   - For each diagram, provide:
+     * journeyName: Name of the user journey
+     * steps: Array of steps with:
+       - stepNumber: Sequential step number
+       - action: User action or system action
+       - component: Component involved
+       - state: State of the component/system
+       - dataFlow: How data flows in this step
+     * diagram: A text-based diagram representation (using ASCII art or structured text format)
+   - Create diagrams that show the flow from user interaction through components to system responses
+   - Base diagrams on component structure, props, and user journeys
 
-## Step 4: Implementation
-1. Create component file structure
-2. Implement base component with tokens
-3. Add interactive states (hover, focus, active)
-4. Implement responsive behavior
-5. Add accessibility attributes (ARIA labels, keyboard navigation)
+IMPORTANT:
+- Base ALL content ONLY on the provided reference data
+- Do NOT make external assumptions
+- User journeys should reflect actual components and features in the design
+- Feature breakout should map to actual components and design tokens
+- LLD diagrams should show realistic flows based on component props and interactions
+- Be specific and actionable
+- Reference actual component names, token names, and design elements
 
-## Step 5: Testing
-1. Visual regression testing
-2. Accessibility testing (WCAG 2.1 AA compliance)
-3. Cross-browser testing
-4. Responsive design testing
-5. Performance testing
+Format as JSON:
+{
+  "title": "SOP",
+  "userJourney": {
+    "userStories": [
+      "string (2-3 lines describing a user story)"
+    ]
+  },
+  "featureBreakout": {
+    "description": "string",
+    "features": [
+      {
+        "name": "string",
+        "description": "string",
+        "components": ["string"],
+        "designTokens": ["string"],
+        "accessibilityNotes": ["string"]
+      }
+    ]
+  },
+  "lld": {
+    "description": "string",
+    "diagrams": [
+      {
+        "journeyName": "string",
+        "steps": [
+          {
+            "stepNumber": number,
+            "action": "string",
+            "component": "string",
+            "state": "string",
+            "dataFlow": "string"
+          }
+        ],
+        "diagram": "string (text-based diagram)"
+      }
+    ]
+  }
+}`;
 
-## Step 6: Documentation
-1. Document component props and usage
-2. Add code examples
-3. Update design system documentation
-4. Create Storybook stories (if applicable)
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a technical documentation expert creating comprehensive Statement of Procedure documents. You analyze design systems, components, and user flows to create actionable documentation. You base all recommendations ONLY on provided data, never on external assumptions.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+    });
 
-## Step 7: Review & Approval
-1. Code review by team
-2. Design review for visual accuracy
-3. Accessibility review
-4. Final approval and merge`;
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from OpenAI');
+    }
 
-  const complianceNotes = `# Compliance & Standards
+    const sopData = JSON.parse(content) as Omit<SOPDocument, 'fullDocument'>;
+    
+    // Generate the full markdown document
+    const fullDocument = formatSOPAsMarkdown(sopData);
 
-## Accessibility (WCAG 2.1 AA)
-- All interactive elements must be keyboard accessible
-- Color contrast ratios:
-  - Normal text: 4.5:1 minimum
-  - Large text (18pt+): 3:1 minimum
-  - UI components: 3:1 minimum
-- All images must have alt text
-- Form inputs must have associated labels
-- Focus indicators must be visible
+    return {
+      ...sopData,
+      fullDocument,
+    };
+  } catch (error) {
+    console.error('Error in generateSOP:', error instanceof Error ? error.message : String(error));
+    return generateDefaultSOP(tokens, components);
+  }
+}
 
-## Code Quality
-- TypeScript strict mode enabled
-- ESLint rules enforced
-- Prettier formatting required
-- No console.log in production code
-- Error handling for all async operations
+function formatSOPAsMarkdown(sop: Omit<SOPDocument, 'fullDocument'>): string {
+  let markdown = `# ${sop.title}\n\n`;
 
-## Performance
-- Component bundle size monitoring
-- Lazy loading for heavy components
-- Image optimization required
-- Code splitting for routes
+  // User Journey Section
+  markdown += `## 1. User Journey\n\n`;
+  sop.userJourney.userStories.forEach((story, index) => {
+    markdown += `### User Story ${index + 1}\n\n`;
+    markdown += `${story}\n\n`;
+  });
 
-## Browser Support
-- Chrome (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari (latest 2 versions)
-- Edge (latest 2 versions)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+  // Feature Breakout Section
+  markdown += `## 2. Feature Breakout\n\n`;
+  markdown += `${sop.featureBreakout.description}\n\n`;
+  sop.featureBreakout.features.forEach((feature, index) => {
+    markdown += `### ${feature.name}\n\n`;
+    markdown += `**Description:** ${feature.description}\n\n`;
+    markdown += `**Components:**\n`;
+    feature.components.forEach(component => {
+      markdown += `- ${component}\n`;
+    });
+    markdown += `\n`;
+    markdown += `**Design Tokens:**\n`;
+    feature.designTokens.forEach(token => {
+      markdown += `- ${token}\n`;
+    });
+    markdown += `\n`;
+    markdown += `**Accessibility Notes:**\n`;
+    feature.accessibilityNotes.forEach(note => {
+      markdown += `- ${note}\n`;
+    });
+    markdown += `\n`;
+    if (index < sop.featureBreakout.features.length - 1) {
+      markdown += `---\n\n`;
+    }
+  });
 
-## Security
-- No sensitive data in client-side code
-- Input validation and sanitization
-- XSS prevention
-- CSRF protection for forms
+  // LLD Section
+  markdown += `## 3. LLD (Low Level Diagram)\n\n`;
+  markdown += `${sop.lld.description}\n\n`;
+  sop.lld.diagrams.forEach((diagram, diagramIndex) => {
+    markdown += `### ${diagram.journeyName}\n\n`;
+    markdown += `**Flow Steps:**\n\n`;
+    diagram.steps.forEach(step => {
+      markdown += `**Step ${step.stepNumber}:** ${step.action}\n`;
+      markdown += `- Component: ${step.component}\n`;
+      markdown += `- State: ${step.state}\n`;
+      markdown += `- Data Flow: ${step.dataFlow}\n\n`;
+    });
+    markdown += `**Diagram:**\n\n`;
+    markdown += `\`\`\`\n`;
+    markdown += `${diagram.diagram}\n`;
+    markdown += `\`\`\`\n\n`;
+    if (diagramIndex < sop.lld.diagrams.length - 1) {
+      markdown += `---\n\n`;
+    }
+  });
 
-## Design System Compliance
-- Use design tokens, not hardcoded values
-- Follow spacing scale (${tokens.spacing.length} spacing tokens available)
-- Use typography tokens (${tokens.typography.length} typography tokens available)
-- Follow color palette (${tokens.colors.length} color tokens available)
-- Consistent border radius usage (${tokens.borderRadius.length} radius tokens available)
+  markdown += `---\n\n`;
+  markdown += `*Generated on ${new Date().toISOString()}*\n`;
+  markdown += `*This document should be reviewed and updated regularly*\n`;
 
-## Documentation Requirements
-- All components must have JSDoc comments
-- Complex logic must have inline comments
-- README for each major feature
-- API documentation for shared utilities`;
+  return markdown;
+}
 
-  const fullDocument = `${versionControl}
+function generateDefaultSOP(tokens: DesignTokens, components: ComponentDetection[]): SOPDocument {
+  const userStories = [
+    `As a user, I want to interact with the design system components so that I can complete my tasks efficiently. The interface should provide clear visual feedback and maintain consistency across all interactions.`,
+    `As a user, I want the application to be accessible and responsive so that I can use it effectively regardless of my device or accessibility needs. All interactive elements should be clearly labeled and keyboard navigable.`,
+  ];
 
----
+  if (components.length > 0) {
+    userStories.push(
+      `As a user, I want to use ${components[0].componentName} and other components seamlessly so that I can navigate through the application with intuitive interactions. The design should guide me through the workflow naturally.`
+    );
+  }
 
-${namingRules}
+  const features = components.map((component, index) => ({
+    name: component.componentName,
+    description: component.description || `Component ${component.componentName} provides functionality for the design system.`,
+    components: [component.componentName],
+    designTokens: [
+      ...tokens.colors.slice(0, 2).map(c => c.name),
+      ...tokens.typography.slice(0, 1).map(t => t.name),
+    ],
+    accessibilityNotes: [
+      'Ensure proper color contrast for text',
+      'Provide keyboard navigation support',
+      'Include ARIA labels where appropriate',
+    ],
+  }));
 
----
+  const diagrams = userStories.map((story, index) => ({
+    journeyName: `User Journey ${index + 1}`,
+    steps: [
+      {
+        stepNumber: 1,
+        action: 'User initiates interaction',
+        component: components.length > 0 ? components[0].componentName : 'Component',
+        state: 'Initial state',
+        dataFlow: 'User input → Component',
+      },
+      {
+        stepNumber: 2,
+        action: 'Component processes action',
+        component: components.length > 0 ? components[0].componentName : 'Component',
+        state: 'Processing state',
+        dataFlow: 'Component → State update',
+      },
+      {
+        stepNumber: 3,
+        action: 'System responds to user',
+        component: components.length > 0 ? components[0].componentName : 'Component',
+        state: 'Updated state',
+        dataFlow: 'State → UI update',
+      },
+    ],
+    diagram: `User → [${components.length > 0 ? components[0].componentName : 'Component'}] → State Update → UI Response`,
+  }));
 
-${designToDevSteps}
+  const sopData = {
+    title: 'SOP',
+    userJourney: {
+      userStories,
+    },
+    featureBreakout: {
+      description: `The design system consists of ${components.length} components with ${tokens.colors.length} color tokens, ${tokens.typography.length} typography tokens, and ${tokens.spacing.length} spacing tokens.`,
+      features: features.length > 0 ? features : [{
+        name: 'Default Feature',
+        description: 'Basic feature implementation',
+        components: ['Component'],
+        designTokens: tokens.colors.slice(0, 2).map(c => c.name),
+        accessibilityNotes: ['Ensure accessibility compliance'],
+      }],
+    },
+    lld: {
+      description: 'Low-level diagrams showing user journey flows through the system components.',
+      diagrams,
+    },
+  };
 
----
-
-${complianceNotes}
-
----
-
-# Design Token Summary
-
-## Colors
-Total: ${tokens.colors.length} tokens
-- Primary: ${tokens.colors.filter(c => c.category === 'primary').length}
-- Secondary: ${tokens.colors.filter(c => c.category === 'secondary').length}
-- Neutral: ${tokens.colors.filter(c => c.category === 'neutral').length}
-- Semantic: ${tokens.colors.filter(c => c.category === 'semantic').length}
-
-## Typography
-Total: ${tokens.typography.length} tokens
-
-## Spacing
-Total: ${tokens.spacing.length} tokens
-
-## Border Radius
-Total: ${tokens.borderRadius.length} tokens
-
----
-
-*Generated on ${new Date().toISOString()}*
-*This document should be reviewed and updated regularly*`;
+  const fullDocument = formatSOPAsMarkdown(sopData);
 
   return {
-    versionControl,
-    namingRules,
-    designToDevSteps,
-    complianceNotes,
+    ...sopData,
     fullDocument,
   };
 }

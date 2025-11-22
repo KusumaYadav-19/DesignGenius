@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-api": "node test-api.js"
+    "test-api": "node test-api.js",
+    "test-sop": "tsx test-sop-generator.js"
   },
   "keywords": [
     "figma",

@@ -1,25 +1,18 @@
 {
-  "sessionId": "session-1763790777501",
-  "timestamp": "2025-11-22T05:53:51.891Z",
+  "sessionId": "session-1763794994699",
+  "timestamp": "2025-11-22T07:03:15.285Z",
   "fileKey": "HehcMGOE2igBAzA1PadVWT",
   "pageName": "hakathon 2025",
   "analysis": {
-    "summary": "The design structure consists of six main frames representing different screens in a user journey: splash screen, upload content, content detection, results, share, and analysing content. The design employs various text styles, colors, and a significant amount of auto layouts, indicating a focus on responsive design.",
+    "summary": "AI analysis unavailable. Please set OPENAI_API_KEY environment variable.",
     "recommendations": [
-      "Ensure consistent naming conventions for frames to improve clarity and organization.",
-      "Consider reducing the number of text styles to maintain visual consistency across the design.",
-      "Evaluate the use of auto layouts for dynamic spacing and alignment to enhance responsiveness and adaptability.",
-      "Implement a color palette hierarchy to simplify color usage and improve accessibility.",
-      "Add component instances for repeatable elements to streamline updates and maintain consistency."
+      "Set up OpenAI API key for AI-powered analysis"
     ],
     "issues": [
-      "Lack of clear navigation or flow between frames may lead to confusion in user experience.",
-      "Potential overlap in functionality between 'Results' and 'Share' frames should be addressed to clarify their purposes."
+      "OpenAI API key not configured"
     ],
     "strengths": [
-      "Strong use of auto layouts indicates a robust approach to responsive design.",
-      "Diverse use of text styles and colors allows for a visually engaging interface.",
-      "Well-defined user journey through the screens reflects thoughtful consideration of user experience."
+      "Design structure parsed successfully"
     ]
   },
   "tokensCount": {
@@ -28,11 +21,17 @@
     "spacing": 7,
     "borderRadius": 4
   },
-  "componentsCount": 6,
-  "accessibilityScore": 25,
+  "componentsCount": 0,
+  "accessibilityScore": 0,
   "designKit": {
     "title": "Guide Lines",
     "typographyCount": 11
   },
-  "outputPath": "/Users/kushhhyadav/Desktop/hackathon/backend-web/output/session-1763790777501"
+  "sop": {
+    "title": "SOP",
+    "userStoriesCount": 2,
+    "featuresCount": 1,
+    "lldDiagramsCount": 2
+  },
+  "outputPath": "/Users/kushhhyadav/Desktop/hackathon/backend-web/output/session-1763794994699"
 }

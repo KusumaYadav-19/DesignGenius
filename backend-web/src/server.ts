@@ -246,7 +246,13 @@ app.post('/api/analyse-page', async (req, res) => {
     const accessibilityReport = await generateAccessibilityReport(nodes, tokens);
     
     console.log('6. Generating SOP document');
-    const sop = generateSOP(tokens);
+    const sop = await generateSOP(
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      nodes
+    );
     
     console.log('7. Generating DesignKit document');
     const designKit = await generateDesignKit(
@@ -280,10 +286,18 @@ app.post('/api/analyse-page', async (req, res) => {
       };
       accessibility: any;
       sop: {
-        versionControl: string;
-        namingRules: string;
-        designToDevSteps: string;
-        complianceNotes: string;
+        title: string;
+        userJourney: {
+          userStories: string[];
+        };
+        featureBreakout: {
+          description: string;
+          features: any[];
+        };
+        lld: {
+          description: string;
+          diagrams: any[];
+        };
         fullDocument: string;
       };
       designKit: {
@@ -321,10 +335,10 @@ app.post('/api/analyse-page', async (req, res) => {
       },
       accessibility: accessibilityReport,
       sop: {
-        versionControl: sop.versionControl,
-        namingRules: sop.namingRules,
-        designToDevSteps: sop.designToDevSteps,
-        complianceNotes: sop.complianceNotes,
+        title: sop.title,
+        userJourney: sop.userJourney,
+        featureBreakout: sop.featureBreakout,
+        lld: sop.lld,
         fullDocument: sop.fullDocument,
       },
       designKit: {

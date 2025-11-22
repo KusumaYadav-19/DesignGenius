@@ -277,6 +277,40 @@ async function displayResults(results) {
     }
   }
 
+  // SOP (Statement of Procedure)
+  if (results.sop) {
+    print(COLORS.cyan, '\n📋 SOP (Statement of Procedure):');
+    console.log(`  Title: ${results.sop.title}`);
+    console.log(`  User Stories: ${results.sop.userJourney?.userStories?.length || 0}`);
+    console.log(`  Features: ${results.sop.featureBreakout?.features?.length || 0}`);
+    console.log(`  LLD Diagrams: ${results.sop.lld?.diagrams?.length || 0}`);
+    
+    // Show preview of user stories
+    if (results.sop.userJourney?.userStories?.length > 0) {
+      print(COLORS.yellow, '\n  User Stories Preview:');
+      results.sop.userJourney.userStories.slice(0, 2).forEach((story, i) => {
+        const preview = story.length > 100 ? story.substring(0, 100) + '...' : story;
+        console.log(`    ${i + 1}. ${preview}`);
+      });
+      if (results.sop.userJourney.userStories.length > 2) {
+        console.log(`    ... and ${results.sop.userJourney.userStories.length - 2} more`);
+      }
+    }
+    
+    // Show preview of features
+    if (results.sop.featureBreakout?.features?.length > 0) {
+      print(COLORS.yellow, '\n  Features Preview:');
+      results.sop.featureBreakout.features.slice(0, 3).forEach((feature, i) => {
+        console.log(`    ${i + 1}. ${feature.name}`);
+        console.log(`       Components: ${feature.components?.length || 0}`);
+        console.log(`       Design Tokens: ${feature.designTokens?.length || 0}`);
+      });
+      if (results.sop.featureBreakout.features.length > 3) {
+        console.log(`    ... and ${results.sop.featureBreakout.features.length - 3} more`);
+      }
+    }
+  }
+
   // Generated Files
   if (results.files) {
     print(COLORS.cyan, '\n📁 Generated Files:');
@@ -308,6 +342,12 @@ async function displayResults(results) {
           title: results.designKit?.title,
           typographyCount: results.designKit?.typography?.typefaces?.length || 0,
         },
+        sop: {
+          title: results.sop?.title,
+          userStoriesCount: results.sop?.userJourney?.userStories?.length || 0,
+          featuresCount: results.sop?.featureBreakout?.features?.length || 0,
+          lldDiagramsCount: results.sop?.lld?.diagrams?.length || 0,
+        },
         outputPath: results.outputPath,
       }, null, 2)
     );
@@ -317,6 +357,12 @@ async function displayResults(results) {
     if (results.outputPath && results.files?.designKit) {
       const designKitPath = path.join(results.outputPath, results.files.designKit);
       print(COLORS.green, `✓ DesignKit saved to: ${designKitPath}`);
+    }
+    
+    // Also show SOP file location if available
+    if (results.outputPath && results.files?.sop) {
+      const sopPath = path.join(results.outputPath, results.files.sop);
+      print(COLORS.green, `✓ SOP saved to: ${sopPath}`);
     }
   }
 
