@@ -30,7 +30,7 @@ export const MainScreen = () => {
             </div>
 
             <MakersMain
-                MAKERSButtonText="Analyze"
+                MAKERSButtonText="Connect"
                 MAKERSTextContentDivClassName="main-screen-main-text"
                 // MAKERSTextContentText="Tokens"
                 MAKERSTextContentText1="Turn Designs into \n Production-Ready Systems"

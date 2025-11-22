@@ -18,7 +18,7 @@ export const MakersBrandLogo = ({
     <div className={`MAKERS-BRAND-LOGO ${className}`}>
       <div className="making-it-logo">
         <div className="text-wrapper-2">
-          <img src={logo} alt="DesignGenius Logo" style={{width: '24px', height: '24px', marginRight: '8px', verticalAlign: 'middle'}} />
+          <img src={logo} alt="DesignGenius Logo" style={{width: '60px', height: '55px', verticalAlign: 'middle'}} />
           DesignGenius
         </div>
       </div>

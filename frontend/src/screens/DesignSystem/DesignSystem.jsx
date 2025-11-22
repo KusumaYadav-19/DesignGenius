@@ -12,16 +12,15 @@ export const DesignSystem = () => {
         className="MAKERS-TEXT-CONTENT-instance"
         text={
           <>
-          AI Design Standardiser And
+          Bridge Design to Development Automatically
             <br />
-          Automation
           </>
         }
         text1={
           <>
-            Build Design Systems that stay consistent,
-            <br />
-            scalable and pixel perfect.
+            Turn Static UI Into A Complete 
+            <br/>
+            Product Blueprint Instantly
           </>
         }
       />
@@ -54,7 +53,7 @@ export const DesignSystem = () => {
         <div className="design-system-audit">
           Design System Audit
           <br />
-          and Governance
+          And Governance
         </div>
       </div>
     </div>

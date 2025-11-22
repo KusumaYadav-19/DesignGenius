@@ -33,7 +33,18 @@
 }
 
 .MAKERS-BUTTON.primary {
-  background-color: #0069ff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .MAKERS-BUTTON.hover {

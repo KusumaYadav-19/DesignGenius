@@ -100,9 +100,9 @@
 }
 
 .upload-button {
-
   padding: 14px 28px;
-  background-color: #0069ff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 200% 200%;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -110,16 +110,19 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   align-self: center;
+  animation: gradientShift 4s ease-in-out infinite;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .upload-button:hover {
-  background-color: #0056d2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
 .upload-button:active {
-  background-color: #004bb8;
+  transform: translateY(0px);
 }
 
 /* Token Input Styling */

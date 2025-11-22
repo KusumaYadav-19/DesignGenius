@@ -36,9 +36,9 @@
   align-self: stretch;
   color: #0a2942;
   font-family: "Inter", Helvetica;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
-  letter-spacing: 0;
-  line-height: 24px;
+  letter-spacing: -0.01em;
+  line-height: 26px;
   position: relative;
 }
