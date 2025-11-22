@@ -1,15 +1,3 @@
-#!/usr/bin/env node
-
-/**
- * Test Script for Figma Design Analyzer Backend
- * 
- * This script tests the backend-web API endpoints:
- * 1. Gets file info and lists pages
- * 2. Allows user to select a page
- * 3. Analyzes the selected page
- * 4. Displays results
- */
-
 import readline from 'readline';
 import * as fs from 'fs';
 import * as path from 'path';

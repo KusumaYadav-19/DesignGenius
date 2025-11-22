@@ -1,35 +1,35 @@
 {
-  "sessionId": "session-1763752508845",
-  "timestamp": "2025-11-21T19:16:23.523Z",
-  "fileKey": "VOnb86jEIb9JsrFiA2QB6z",
-  "pageName": "Mymmc Low-Mid Fi",
+  "sessionId": "session-1763785215003",
+  "timestamp": "2025-11-22T04:20:57.757Z",
+  "fileKey": "HehcMGOE2igBAzA1PadVWT",
+  "pageName": "hakathon 2025",
   "analysis": {
-    "summary": "The design structure consists of multiple frames representing different screens or components, such as 'home', 'history', and 'More Details'. There are also several text elements and a rectangle, indicating a mix of UI components. The absence of auto layouts and spacing suggests a lack of responsive design practices.",
+    "summary": "The design structure consists of six main frames that represent different screens in a user flow, including a splash screen, content upload, content detection, results display, sharing options, and an analysis screen. Each frame appears to be organized for a linear progression through the application.",
     "recommendations": [
-      "Implement auto layouts to improve responsiveness and maintain consistent spacing across frames.",
-      "Ensure unique names for frames to avoid confusion, especially with multiple frames named 'home' and 'history'.",
-      "Utilize consistent text styles to enhance readability and maintain visual hierarchy across the design.",
-      "Consider adding spacing guidelines to ensure uniform padding and margin throughout the design.",
-      "Review color usage for accessibility compliance, ensuring that color contrasts meet WCAG standards."
+      "Ensure consistent naming conventions across all frames for better clarity and navigation.",
+      "Evaluate the use of color contrast for accessibility; ensure that text is legible against background colors.",
+      "Consider adding component instances for reusable UI elements to reduce redundancy and improve maintainability.",
+      "Review auto layout settings to ensure that all elements respond correctly to different screen sizes and orientations.",
+      "Incorporate interactive components or prototypes to better visualize user flows and interactions across frames."
     ],
     "issues": [
-      "Multiple frames with the same name ('home' and 'history') can lead to confusion during collaboration.",
-      "Lack of auto layouts and spacing may result in a static design that doesn't adapt well to different screen sizes.",
-      "Inconsistent use of text styles could lead to a fragmented user experience."
+      "Lack of clear hierarchy in text styles may lead to inconsistencies in typography across screens.",
+      "Limited color palette might affect visual interest; consider expanding to enhance brand identity.",
+      "Inconsistent spacing between elements across frames could disrupt visual harmony."
     ],
     "strengths": [
-      "Diverse range of frames suggests a comprehensive approach to covering various user interactions.",
-      "The use of multiple text styles indicates an effort to create a visually engaging design.",
-      "Inclusion of components like rectangles and frames demonstrates an understanding of basic UI elements."
+      "The high number of auto layouts indicates a well-structured design that adapts to various content sizes.",
+      "A diverse set of text styles suggests an effort to create a unique visual language.",
+      "The overall flow from splash screen to content analysis is intuitive and user-friendly."
     ]
   },
   "tokensCount": {
-    "colors": 12,
+    "colors": 10,
     "typography": 11,
-    "spacing": 0,
-    "borderRadius": 7
+    "spacing": 7,
+    "borderRadius": 4
   },
-  "componentsCount": 13,
-  "accessibilityScore": 30,
-  "outputPath": "C:\\Users\\Syed Nawaz\\Documents\\Figma\\figma-mcp-ai-web\\backend-web\\output\\session-1763752508845"
+  "componentsCount": 6,
+  "accessibilityScore": 40,
+  "outputPath": "/Users/kushhhyadav/Desktop/hackathon/backend-web/output/session-1763785215003"
 }

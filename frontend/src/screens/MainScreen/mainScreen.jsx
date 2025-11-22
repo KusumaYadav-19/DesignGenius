@@ -24,6 +24,7 @@ export const MainScreen = () => {
                             stateProp="default"
                             text="Dashboard"
                             type="primary"
+                            navigateTo="/dashboard"
                         />
                     </div>
                 </div>
