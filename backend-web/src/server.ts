@@ -503,6 +503,300 @@ app.post('/api/analyse-page', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/sessions
+ * List all analysis sessions
+ */
+app.get('/api/sessions', (req, res) => {
+  try {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      return res.json({
+        success: true,
+        sessions: [],
+      });
+    }
+
+    const sessions = fs.readdirSync(OUTPUT_DIR)
+      .filter(item => {
+        const itemPath = path.join(OUTPUT_DIR, item);
+        return fs.statSync(itemPath).isDirectory() && item.startsWith('session-');
+      })
+      .map(sessionId => {
+        const sessionPath = path.join(OUTPUT_DIR, sessionId);
+        const files = fs.readdirSync(sessionPath);
+        
+        // Check for the required files
+        const requiredFiles = {
+          accessibilityReport: files.includes('accessibility-report.json'),
+          analysisResults: files.includes('analysis-results.json'),
+          designKit: files.includes('DesignKit.md'),
+          sop: files.includes('SOP.md'),
+        };
+
+        // Get session metadata if available
+        let metadata: { timestamp?: string; fileKey?: string; pageName?: string } = {};
+        if (files.includes('analysis-results.json')) {
+          try {
+            const analysisData = JSON.parse(
+              fs.readFileSync(path.join(sessionPath, 'analysis-results.json'), 'utf-8')
+            );
+            metadata = {
+              timestamp: analysisData.timestamp,
+              fileKey: analysisData.fileKey,
+              pageName: analysisData.pageName,
+            };
+          } catch (e) {
+            // Ignore errors
+          }
+        }
+
+        return {
+          sessionId,
+          ...metadata,
+          files: requiredFiles,
+          hasAllFiles: Object.values(requiredFiles).every(v => v),
+        };
+      })
+      .sort((a, b) => {
+        // Sort by timestamp if available, otherwise by sessionId
+        if (a.timestamp && b.timestamp) {
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        }
+        return b.sessionId.localeCompare(a.sessionId);
+      });
+
+    res.json({
+      success: true,
+      sessions,
+    });
+  } catch (error) {
+    console.error('Error listing sessions:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * GET /api/sessions/:sessionId/files
+ * Get files for a specific session
+ */
+app.get('/api/sessions/:sessionId/files', (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const sessionPath = path.join(OUTPUT_DIR, sessionId);
+
+    if (!fs.existsSync(sessionPath)) {
+      return res.status(404).json({
+        success: false,
+        error: 'Session not found',
+      });
+    }
+
+    const files = fs.readdirSync(sessionPath);
+    
+    // Filter for the required files
+    const fileList = {
+      accessibilityReport: files.includes('accessibility-report.json') 
+        ? 'accessibility-report.json' 
+        : null,
+      analysisResults: files.includes('analysis-results.json')
+        ? 'analysis-results.json'
+        : null,
+      designKit: files.includes('DesignKit.md')
+        ? 'DesignKit.md'
+        : null,
+      sop: files.includes('SOP.md')
+        ? 'SOP.md'
+        : null,
+    };
+
+    res.json({
+      success: true,
+      sessionId,
+      files: fileList,
+    });
+  } catch (error) {
+    console.error('Error getting session files:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * GET /api/sessions/:sessionId/files/:fileName
+ * Get content of a specific file
+ */
+app.get('/api/sessions/:sessionId/files/:fileName', (req, res) => {
+  try {
+    const { sessionId, fileName } = req.params;
+    const sessionPath = path.join(OUTPUT_DIR, sessionId);
+    const filePath = path.join(sessionPath, fileName);
+
+    // Security: Only allow the required files
+    const allowedFiles = [
+      'accessibility-report.json',
+      'analysis-results.json',
+      'DesignKit.md',
+      'SOP.md',
+    ];
+
+    if (!allowedFiles.includes(fileName)) {
+      return res.status(403).json({
+        success: false,
+        error: 'File not allowed',
+      });
+    }
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        error: 'File not found',
+      });
+    }
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    
+    res.json({
+      success: true,
+      content,
+      fileName,
+      sessionId,
+    });
+  } catch (error) {
+    console.error('Error reading file:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * GET /api/sessions/:sessionId/files/:fileName/download
+ * Download file as .doc format
+ */
+app.get('/api/sessions/:sessionId/files/:fileName/download', (req, res) => {
+  try {
+    const { sessionId, fileName } = req.params;
+    const sessionPath = path.join(OUTPUT_DIR, sessionId);
+    const filePath = path.join(sessionPath, fileName);
+
+    // Security: Only allow the required files
+    const allowedFiles = [
+      'accessibility-report.json',
+      'analysis-results.json',
+      'DesignKit.md',
+      'SOP.md',
+    ];
+
+    if (!allowedFiles.includes(fileName)) {
+      return res.status(403).json({
+        success: false,
+        error: 'File not allowed',
+      });
+    }
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        error: 'File not found',
+      });
+    }
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    
+    // Convert to .doc format (using HTML format that Word can open)
+    let docContent = '';
+    
+    if (fileName.endsWith('.json')) {
+      // Convert JSON to formatted document
+      const jsonData = JSON.parse(content);
+      docContent = convertJSONToHTML(jsonData, fileName);
+    } else if (fileName.endsWith('.md')) {
+      // Convert Markdown to HTML
+      docContent = convertMarkdownToHTML(content);
+    }
+
+    // Set headers for download
+    const docFileName = fileName.replace(/\.(json|md)$/, '.doc');
+    res.setHeader('Content-Type', 'application/msword');
+    res.setHeader('Content-Disposition', `attachment; filename="${docFileName}"`);
+    res.send(docContent);
+  } catch (error) {
+    console.error('Error converting file:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Helper function to convert JSON to HTML (Word-compatible)
+function convertJSONToHTML(jsonData: any, fileName: string): string {
+  const title = fileName.replace('.json', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  
+  let html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h1 { color: #333; }
+    pre { background: #f5f5f5; padding: 15px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>${title}</h1>
+  <pre>${JSON.stringify(jsonData, null, 2)}</pre>
+</body>
+</html>`;
+  
+  return html;
+}
+
+// Helper function to convert Markdown to HTML (Word-compatible)
+function convertMarkdownToHTML(markdown: string): string {
+  // Simple markdown to HTML conversion
+  let html = markdown
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/^- (.*$)/gim, '<li>$1</li>')
+    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+    .replace(/\n/g, '<br>');
+
+  // Wrap list items in ul tags
+  html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
+    h2 { color: #555; margin-top: 30px; }
+    h3 { color: #777; margin-top: 20px; }
+    pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    code { font-family: 'Courier New', monospace; }
+    ul { margin-left: 20px; }
+    li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+}
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log('Express server started');
@@ -510,5 +804,9 @@ app.listen(PORT, () => {
   console.log('  GET  /health');
   console.log('  POST /api/file-info');
   console.log('  POST /api/analyse-page');
+  console.log('  GET  /api/sessions');
+  console.log('  GET  /api/sessions/:sessionId/files');
+  console.log('  GET  /api/sessions/:sessionId/files/:fileName');
+  console.log('  GET  /api/sessions/:sessionId/files/:fileName/download');
 });
 

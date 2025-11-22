@@ -8,6 +8,13 @@
       ],
       "dataModelId": "337:579",
       "isRoot": true
+    },
+    {
+      "id": "src/screens/Dashboard/Dashboard.jsx",
+      "label": "Dashboard",
+      "routes": [
+        "/dashboard"
+      ]
     }
   ],
   "edges": []
