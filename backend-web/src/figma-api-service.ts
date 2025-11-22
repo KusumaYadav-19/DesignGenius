@@ -139,6 +139,12 @@ export async function getFileInfo(fileKey: string, accessToken: string): Promise
     const errorText = await response.text();
     let errorMessage = `Figma API error: ${response.status} ${response.statusText}`;
     
+    // Check for rate limit (429 status code)
+    if (response.status === 429) {
+      errorMessage = 'Rate limit exceeded';
+      throw new Error(errorMessage);
+    }
+    
     // Try to parse error message from response
     try {
       const errorData = JSON.parse(errorText);
@@ -179,6 +185,12 @@ export async function getPageNodes(
 
   if (!response.ok) {
     const errorText = await response.text();
+    
+    // Check for rate limit (429 status code)
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded');
+    }
+    
     throw new Error(`Figma API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 

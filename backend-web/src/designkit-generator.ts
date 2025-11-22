@@ -324,10 +324,6 @@ function formatDesignKitAsMarkdown(designKit: Omit<DesignKitDocument, 'fullDocum
   });
   markdown += `\n`;
 
-  markdown += `---\n\n`;
-  markdown += `*Generated on ${new Date().toISOString()}*\n`;
-  markdown += `*This document should be reviewed and updated regularly*\n`;
-
   return markdown;
 }
 

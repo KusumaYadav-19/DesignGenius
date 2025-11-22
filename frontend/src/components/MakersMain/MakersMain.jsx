@@ -50,7 +50,13 @@ export const MakersMain = ({
       const fileInfoData = await fileInfoResponse.json();
 
       if (!fileInfoData.success) {
-        setError(fileInfoData.error || 'Failed to get file information');
+        // Check for rate limit error
+        if (fileInfoResponse.status === 429 || fileInfoData.errorCode === 'RATE_LIMIT_EXCEEDED') {
+          setError('⚠️ Rate limit exceeded. Please wait a few minutes before trying again. Figma allows a limited number of requests per minute.');
+        } else {
+          setError(fileInfoData.error || 'Failed to get file information');
+        }
+        setLoading(false);
         return;
       }
 
@@ -80,10 +86,16 @@ export const MakersMain = ({
           console.log('Page analysis completed successfully:', analysisData);
           // Analysis completed - you can add success handling here if needed
         } else {
-          setError(analysisData.error || 'Failed to analyze page');
+          // Check for rate limit error
+          if (analysisResponse.status === 429 || analysisData.errorCode === 'RATE_LIMIT_EXCEEDED') {
+            setError('⚠️ Rate limit exceeded. Please wait a few minutes before trying again. Figma allows a limited number of requests per minute.');
+          } else {
+            setError(analysisData.error || 'Failed to analyze page');
+          }
         }
       } else {
         setError('No pages found in the Figma file');
+        setLoading(false);
       }
 
     } catch (err) {

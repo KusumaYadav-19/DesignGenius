@@ -37,8 +37,30 @@
     align-items: center;
     display: inline-flex;
     flex: 0 0 auto;
-    gap: 32px;
+    gap: 20px;
     position: relative;
+}
+
+/* Back Button */
+.dashboard-back-button {
+    background: none;
+    border: none;
+    color: #667eea;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: "Inter", sans-serif;
+    font-size: 24px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-back-button:hover {
+    background: #f3f4f6;
+    color: #764ba2;
 }
 
 /* Component Instance - General */
@@ -188,24 +210,6 @@
 .files-view-header {
     margin-bottom: 30px;
     text-align: center;
-}
-
-.back-button {
-    background: none;
-    border: 2px solid #667eea;
-    color: #667eea;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    font-family: "Inter", sans-serif;
-    margin-bottom: 20px;
-    transition: all 0.2s;
-}
-
-.back-button:hover {
-    background: #667eea;
-    color: white;
 }
 
 .files-view-title {

@@ -1,15 +1,24 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { MakersBrandLogo } from "../../components/MakersBrandLogo";
 import { MakersButton } from "../../components/MakersButton";
 import { MakersMain } from "../../components/MakersMain";
 import "./mainScreen.css";
 
 export const MainScreen = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="main-screen">
             <div className="main-screen-navigation">
                 <div className="main-screen-container">
                     <div className="main-screen-left">
+                        <button 
+                            className="main-screen-back-button"
+                            onClick={() => navigate("/")}
+                        >
+                            ←
+                        </button>
                         <MakersBrandLogo
                             className="main-screen-component-instance"
                             rectangleClassName="main-screen-brand-logo-instance"

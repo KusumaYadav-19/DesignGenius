@@ -238,65 +238,55 @@ Format as JSON:
 }
 
 function formatSOPAsMarkdown(sop: Omit<SOPDocument, 'fullDocument'>): string {
-  let markdown = `# ${sop.title}\n\n`;
+  let markdown = `${sop.title}\n\n`;
 
   // User Journey Section
-  markdown += `## 1. User Journey\n\n`;
+  markdown += `User Journey\n\n`;
   sop.userJourney.userStories.forEach((story, index) => {
-    markdown += `### User Story ${index + 1}\n\n`;
+    markdown += `User Story ${index + 1}\n\n`;
     markdown += `${story}\n\n`;
   });
 
   // Feature Breakout Section
-  markdown += `## 2. Feature Breakout\n\n`;
+  markdown += `Feature Breakout\n\n`;
   markdown += `${sop.featureBreakout.description}\n\n`;
   sop.featureBreakout.features.forEach((feature, index) => {
-    markdown += `### ${feature.name}\n\n`;
-    markdown += `**Description:** ${feature.description}\n\n`;
-    markdown += `**Components:**\n`;
+    markdown += `${feature.name}\n\n`;
+    markdown += `Description: ${feature.description}\n\n`;
+    markdown += `Components:\n`;
     feature.components.forEach(component => {
-      markdown += `- ${component}\n`;
+      markdown += `${component}\n`;
     });
     markdown += `\n`;
-    markdown += `**Design Tokens:**\n`;
+    markdown += `Design Tokens:\n`;
     feature.designTokens.forEach(token => {
-      markdown += `- ${token}\n`;
+      markdown += `${token}\n`;
     });
     markdown += `\n`;
-    markdown += `**Accessibility Notes:**\n`;
+    markdown += `Accessibility Notes:\n`;
     feature.accessibilityNotes.forEach(note => {
-      markdown += `- ${note}\n`;
+      markdown += `${note}\n`;
     });
     markdown += `\n`;
-    if (index < sop.featureBreakout.features.length - 1) {
-      markdown += `---\n\n`;
-    }
   });
 
   // LLD Section
-  markdown += `## 3. LLD (Low Level Diagram)\n\n`;
+  markdown += `LLD (Low Level Diagram)\n\n`;
   markdown += `${sop.lld.description}\n\n`;
   sop.lld.diagrams.forEach((diagram, diagramIndex) => {
-    markdown += `### ${diagram.journeyName}\n\n`;
-    markdown += `**Flow Steps:**\n\n`;
+    markdown += `${diagram.journeyName}\n\n`;
+    markdown += `Flow Steps:\n\n`;
     diagram.steps.forEach(step => {
-      markdown += `**Step ${step.stepNumber}:** ${step.action}\n`;
-      markdown += `- Component: ${step.component}\n`;
-      markdown += `- State: ${step.state}\n`;
-      markdown += `- Data Flow: ${step.dataFlow}\n\n`;
+      markdown += `Step ${step.stepNumber}: ${step.action}\n\n`;
+      markdown += `Component: ${step.component}\n`;
+      markdown += `State: ${step.state}\n`;
+      markdown += `Data Flow: ${step.dataFlow}\n\n`;
     });
-    markdown += `**Diagram:**\n\n`;
-    markdown += `\`\`\`\n`;
-    markdown += `${diagram.diagram}\n`;
-    markdown += `\`\`\`\n\n`;
-    if (diagramIndex < sop.lld.diagrams.length - 1) {
-      markdown += `---\n\n`;
-    }
+    markdown += `Diagram:\n\n`;
+    // Remove any markdown code block formatting from diagram
+    const cleanDiagram = diagram.diagram.replace(/```/g, '').replace(/`/g, '').trim();
+    markdown += `${cleanDiagram}\n\n`;
   });
-
-  markdown += `---\n\n`;
-  markdown += `*Generated on ${new Date().toISOString()}*\n`;
-  markdown += `*This document should be reviewed and updated regularly*\n`;
 
   return markdown;
 }

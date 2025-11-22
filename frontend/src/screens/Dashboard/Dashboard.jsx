@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MakersBrandLogo } from "../../components/MakersBrandLogo";
 import "./Dashboard.css";
 
 const BACKEND_URL = 'http://localhost:3002';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -113,6 +115,23 @@ export const Dashboard = () => {
         return content;
       }
     }
+    // For markdown files, remove markdown formatting for cleaner display
+    if (fileName.endsWith('.md')) {
+      return content
+        .replace(/^#+\s*/gm, '') // Remove # headers
+        .replace(/\*\*(.*?)\*\*/g, '$1') // Remove **bold**
+        .replace(/\*(.*?)\*/g, '$1') // Remove *italic*
+        .replace(/^-\s+/gm, '') // Remove - bullets
+        .replace(/```[\s\S]*?```/g, (match) => {
+          // Remove code blocks but keep content
+          return match.replace(/```/g, '').trim();
+        })
+        .replace(/`([^`]+)`/g, '$1') // Remove inline code
+        .replace(/^---+\s*$/gm, '') // Remove horizontal rules
+        .replace(/\*Generated on[^\n]*/gi, '')
+        .replace(/\*This document should be reviewed[^\n]*/gi, '')
+        .trim();
+    }
     return content;
   };
 
@@ -129,6 +148,12 @@ export const Dashboard = () => {
       <div className="dashboard-navigation">
         <div className="dashboard-container">
           <div className="dashboard-left">
+            <button 
+              className="dashboard-back-button"
+              onClick={() => navigate("/main")}
+            >
+              ←
+            </button>
             <MakersBrandLogo
               className="dashboard-component-instance"
               rectangleClassName="dashboard-brand-logo-instance"
@@ -181,19 +206,8 @@ export const Dashboard = () => {
             ) : (
               <div className="dashboard-files-view">
                 <div className="files-view-header">
-                  <button 
-                    className="back-button"
-                    onClick={() => {
-                      setSelectedSession(null);
-                      setSessionFiles(null);
-                      setViewingFile(null);
-                      setFileContent("");
-                    }}
-                  >
-                    ← Back to Sessions
-                  </button>
                   <h2 className="files-view-title">
-                    Files for {(() => {
+                    {(() => {
                       const selectedSessionData = sessions.find(s => s.sessionId === selectedSession);
                       if (selectedSessionData) {
                         const index = sessions.findIndex(s => s.sessionId === selectedSession);
