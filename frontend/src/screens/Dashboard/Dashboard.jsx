@@ -160,7 +160,7 @@ export const Dashboard = () => {
             {!selectedSession ? (
               <>
                 <div className="dashboard-header">
-                  <h1 className="dashboard-title">Overview</h1>
+                  <h3 className="dashboard-title">Overview</h3>
                 </div>
                 <div className="dashboard-sessions-grid">
                   {sessions.map((session, index) => (
