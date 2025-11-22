@@ -21,6 +21,7 @@ import type { FigmaNode } from './figma-parser.js';
 import { generateDesignTokens } from './tokens-generator.js';
 import { generateCode } from './code-generator.js';
 import { generateSOP } from './sop-generator.js';
+import { generateDesignKit } from './designkit-generator.js';
 import {
   analyzeLayers,
   detectComponents,
@@ -246,6 +247,15 @@ app.post('/api/analyse-page', async (req, res) => {
     
     console.log('6. Generating SOP document');
     const sop = generateSOP(tokens);
+    
+    console.log('7. Generating DesignKit document');
+    const designKit = await generateDesignKit(
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      sop.fullDocument
+    );
 
     const result: {
       success: boolean;
@@ -274,6 +284,16 @@ app.post('/api/analyse-page', async (req, res) => {
         namingRules: string;
         designToDevSteps: string;
         complianceNotes: string;
+        fullDocument: string;
+      };
+      designKit: {
+        title: string;
+        subtitle: string;
+        typography: any;
+        iconography: any;
+        spacingSystem: any;
+        colorSystem: any;
+        gridAndLayout: any;
         fullDocument: string;
       };
       outputPath?: string;
@@ -306,6 +326,16 @@ app.post('/api/analyse-page', async (req, res) => {
         designToDevSteps: sop.designToDevSteps,
         complianceNotes: sop.complianceNotes,
         fullDocument: sop.fullDocument,
+      },
+      designKit: {
+        title: designKit.title,
+        subtitle: designKit.subtitle,
+        typography: designKit.typography,
+        iconography: designKit.iconography,
+        spacingSystem: designKit.spacingSystem,
+        colorSystem: designKit.colorSystem,
+        gridAndLayout: designKit.gridAndLayout,
+        fullDocument: designKit.fullDocument,
       },
     };
 
@@ -381,6 +411,13 @@ app.post('/api/analyse-page', async (req, res) => {
         'utf-8'
       );
       
+      // Save DesignKit document as markdown
+      fs.writeFileSync(
+        path.join(outputPath, 'DesignKit.md'),
+        designKit.fullDocument,
+        'utf-8'
+      );
+      
       console.log(`Results saved to: ${outputPath}`);
       
       // Add output path to response
@@ -395,6 +432,7 @@ app.post('/api/analyse-page', async (req, res) => {
         accessibilityReport: 'accessibility-report.json',
         components: 'components.json',
         namingSuggestions: 'naming-suggestions.json',
+        designKit: 'DesignKit.md',
       };
     } catch (fileError) {
       console.error('Error saving files:', fileError);

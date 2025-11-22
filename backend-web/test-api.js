@@ -253,6 +253,30 @@ async function displayResults(results) {
     console.log(`  Summary: ${results.accessibility.summary}`);
   }
 
+  // DesignKit
+  if (results.designKit) {
+    print(COLORS.cyan, '\n📘 DesignKit:');
+    console.log(`  Title: ${results.designKit.title}`);
+    console.log(`  Subtitle: ${results.designKit.subtitle}`);
+    console.log(`  Typography Typefaces: ${results.designKit.typography?.typefaces?.length || 0}`);
+    console.log(`  Iconography Guidelines: ${results.designKit.iconography?.guidelines?.length || 0}`);
+    console.log(`  Spacing Guidelines: ${results.designKit.spacingSystem?.guidelines?.length || 0}`);
+    console.log(`  Color Guidelines: ${results.designKit.colorSystem?.guidelines?.length || 0}`);
+    console.log(`  Grid & Layout Rules: ${results.designKit.gridAndLayout?.rules?.length || 0}`);
+    
+    // Show preview of typography typefaces
+    if (results.designKit.typography?.typefaces?.length > 0) {
+      print(COLORS.yellow, '\n  Typography Typefaces Preview:');
+      results.designKit.typography.typefaces.slice(0, 3).forEach((typeface, i) => {
+        console.log(`    ${i + 1}. ${typeface.name}`);
+        console.log(`       Purpose: ${typeface.purpose.substring(0, 60)}...`);
+      });
+      if (results.designKit.typography.typefaces.length > 3) {
+        console.log(`    ... and ${results.designKit.typography.typefaces.length - 3} more`);
+      }
+    }
+  }
+
   // Generated Files
   if (results.files) {
     print(COLORS.cyan, '\n📁 Generated Files:');
@@ -280,10 +304,63 @@ async function displayResults(results) {
         },
         componentsCount: results.components?.length || 0,
         accessibilityScore: results.accessibility?.score || 0,
+        designKit: {
+          title: results.designKit?.title,
+          typographyCount: results.designKit?.typography?.typefaces?.length || 0,
+        },
         outputPath: results.outputPath,
       }, null, 2)
     );
     print(COLORS.green, `\n✓ Summary saved to: ${summaryPath}`);
+    
+    // Also show DesignKit file location if available
+    if (results.outputPath && results.files?.designKit) {
+      const designKitPath = path.join(results.outputPath, results.files.designKit);
+      print(COLORS.green, `✓ DesignKit saved to: ${designKitPath}`);
+    }
+  }
+
+  // Ask if user wants to see DesignKit preview
+  if (results.designKit) {
+    const showDesignKit = await question('\nShow DesignKit preview? (y/n): ');
+    if (showDesignKit.toLowerCase() === 'y') {
+      printSection('DesignKit Preview');
+      
+      print(COLORS.cyan, `# ${results.designKit.title}`);
+      print(COLORS.cyan, `## ${results.designKit.subtitle}\n`);
+      
+      // Show first typography typeface in detail
+      if (results.designKit.typography?.typefaces?.length > 0) {
+        const firstTypeface = results.designKit.typography.typefaces[0];
+        print(COLORS.yellow, `### Typography Example: ${firstTypeface.name}\n`);
+        console.log(`Purpose: ${firstTypeface.purpose}`);
+        console.log(`Usage: ${firstTypeface.usage}`);
+        console.log(`Hierarchy: ${firstTypeface.hierarchy}\n`);
+      }
+      
+      // Show iconography
+      if (results.designKit.iconography) {
+        print(COLORS.yellow, '### Iconography\n');
+        console.log(`${results.designKit.iconography.description}\n`);
+        console.log(`Usage: ${results.designKit.iconography.usage}\n`);
+      }
+      
+      // Show spacing system
+      if (results.designKit.spacingSystem) {
+        print(COLORS.yellow, '### Spacing System\n');
+        console.log(`${results.designKit.spacingSystem.description}\n`);
+        console.log(`Scale: ${results.designKit.spacingSystem.scale}\n`);
+      }
+      
+      // Show color system
+      if (results.designKit.colorSystem) {
+        print(COLORS.yellow, '### Color System\n');
+        console.log(`${results.designKit.colorSystem.description}\n`);
+        console.log(`Palette: ${results.designKit.colorSystem.palette}\n`);
+      }
+      
+      print(COLORS.green, '... (Full DesignKit saved to DesignKit.md)');
+    }
   }
 
   // Ask if user wants to see full results
