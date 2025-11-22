@@ -12,8 +12,8 @@
 .MAKERS-BRAND-LOGO .making-it-logo {
   align-items: center;
   display: inline-flex;
-  gap: 8px;
-  height: 30px;
+  gap: 0px;
+  height: auto;
   position: relative;
 }
 
@@ -55,15 +55,33 @@
 }
 
 .MAKERS-BRAND-LOGO .text-wrapper-2 {
-  color: #0a2942;
-  font-family: "Inter", Helvetica;
-  font-size: 24px; /* Increased from 18px to 24px */
-  font-weight: 600; /* Increased from 500 to 600 for bolder look */
-  letter-spacing: 0;
-  line-height: 36px; /* Increased from 30px to match new font size */
-  margin-top: -1.00px;
+  color: #1a1a1a;
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-left: 12px;
   position: relative;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
   width: fit-content;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }

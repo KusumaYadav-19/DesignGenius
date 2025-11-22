@@ -14,18 +14,12 @@ export const MakersMain = ({
   const [tokenValue, setTokenValue] = useState("");
   const [showToken, setShowToken] = useState(false);
   const [figmaUrl, setFigmaUrl] = useState("");
-  const [pages, setPages] = useState([]);
-  const [selectedPage, setSelectedPage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [analysisResult, setAnalysisResult] = useState(null);
-  const [analysisLoading, setAnalysisLoading] = useState(false);
 
   const handleAnalyze = async () => {
     // Reset previous state
     setError("");
-    setPages([]);
-    setSelectedPage("");
 
     // Validation
     if (!figmaUrl.trim()) {
@@ -40,7 +34,9 @@ export const MakersMain = ({
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3002/api/file-info', {
+      // Step 1: Get file info
+      console.log('Step 1: Getting file info...');
+      const fileInfoResponse = await fetch('http://localhost:3002/api/file-info', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,14 +47,45 @@ export const MakersMain = ({
         })
       });
 
-      const data = await response.json();
+      const fileInfoData = await fileInfoResponse.json();
 
-      if (data.success) {
-        setPages(data.pages);
-        console.log('File info received:', data);
-      } else {
-        setError(data.error || 'Failed to get file information');
+      if (!fileInfoData.success) {
+        setError(fileInfoData.error || 'Failed to get file information');
+        return;
       }
+
+      console.log('File info received:', fileInfoData);
+
+      // Step 2: Auto-analyze the first page
+      if (fileInfoData.pages && fileInfoData.pages.length > 0) {
+        const firstPage = fileInfoData.pages[0];
+        
+        console.log('Step 2: Auto-analyzing first page:', firstPage.name);
+
+        const analysisResponse = await fetch('http://localhost:3002/api/analyse-page', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileUrl: figmaUrl,
+            pageId: firstPage.id,
+            accessToken: tokenValue
+          })
+        });
+
+        const analysisData = await analysisResponse.json();
+
+        if (analysisData.success) {
+          console.log('Page analysis completed successfully:', analysisData);
+          // Analysis completed - you can add success handling here if needed
+        } else {
+          setError(analysisData.error || 'Failed to analyze page');
+        }
+      } else {
+        setError('No pages found in the Figma file');
+      }
+
     } catch (err) {
       setError('Network error: ' + err.message);
       console.error('API Error:', err);
@@ -67,43 +94,6 @@ export const MakersMain = ({
     }
   };
   // Add after line 66: }; (end of handleAnalyze function)
-  const handleAnalyzePage = async () => {
-    if (!selectedPage) {
-      setError("Please select a page to analyze");
-      return;
-    }
-
-    setAnalysisLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch('http://localhost:3002/api/analyse-page', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileUrl: figmaUrl,
-          pageId: selectedPage,
-          accessToken: tokenValue
-        })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setAnalysisResult(data);
-        console.log('Page analysis received:', data);
-      } else {
-        setError(data.error || 'Failed to analyze page');
-      }
-    } catch (err) {
-      setError('Network error: ' + err.message);
-      console.error('Analysis API Error:', err);
-    } finally {
-      setAnalysisLoading(false);
-    }
-  };
   return (
     <div className={`makers-main ${layout} ${className}`}>
       <div className="makers-main-content">
@@ -161,33 +151,7 @@ export const MakersMain = ({
             </div>
           )}
 
-          {pages.length > 0 && (
-            <div className="form-section" style={{ marginTop: '20px' }}>
-              <label className="form-label">Select Page to Analyze:</label>
-              <select
-                className="form-input"
-                value={selectedPage}
-                onChange={(e) => setSelectedPage(e.target.value)}
-              >
-                <option value="">Choose a page...</option>
-                {pages.map(page => (
-                  <option key={page.id} value={page.id}>
-                    {page.name}
-                  </option>
-                ))}
-              </select>
-                  {selectedPage && (
-                <button 
-                  className="upload-button" 
-                  style={{marginTop: '10px'}}
-                  onClick={handleAnalyzePage}
-                  disabled={analysisLoading}
-                >
-                  {analysisLoading ? 'Analyzing Page...' : 'Analyze Selected Page'}
-                </button>
-              )}
-            </div>
-          )}
+
         </div>
       </div>
     </div>

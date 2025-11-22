@@ -7,19 +7,38 @@
 }
 
 .design-system .MAKERS-TEXT-CONTENT-instance {
-  left: 110px !important;
+  left: 180px !important;
   position: absolute !important;
   top: 209px !important;
   width: 480px !important;
 }
 
 .design-system .MAKERS-BUTTON-instance {
-  background-color: #0069ff !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-size: 200% 200% !important;
   border: unset !important;
   border-color: unset !important;
-  left: 110px !important;
+  left: 180px !important;
   position: absolute !important;
-  top: 487px !important;
+  top: 505px !important;
+  margin-bottom: 40px !important;
+  animation: gradientShift 4s ease-in-out infinite !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+.design-system .MAKERS-BUTTON-instance:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .design-system .design-component-instance-node {
@@ -32,7 +51,7 @@
   display: inline-flex;
   height: 94px;
   justify-content: center;
-  left: 47px;
+  left: 40px;
   padding: 0px 20px;
   position: absolute;
   top: 0;
@@ -67,7 +86,7 @@
 
 .design-system .image {
   height: 406px;
-  left: 613px;
+  left: 680px;
   position: absolute;
   top: 209px;
   width: 561px;
@@ -84,25 +103,27 @@
 
 .design-system .text-wrapper-3 {
   color: #1b96c4;
-  font-family: "Inter", Helvetica;
-  font-size: 16px;
-  font-weight: 400;
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
   left: 27px;
-  letter-spacing: 0;
+  letter-spacing: 0.5px;
   line-height: 24px;
   position: absolute;
   top: 53px;
   white-space: nowrap;
+  text-transform: uppercase;
 }
+
 
 .design-system .design-system-audit {
   color: #1b96c4;
-  font-family: "Inter", Helvetica;
-  font-size: 14px;
-  font-weight: 400;
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
   left: 27px;
-  letter-spacing: 0;
-  line-height: 21px;
+  letter-spacing: 0.3px;
+  line-height: 22px;
   position: absolute;
   top: 77px;
 }
