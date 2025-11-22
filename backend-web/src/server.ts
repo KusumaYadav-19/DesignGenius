@@ -21,6 +21,8 @@ import type { FigmaNode } from './figma-parser.js';
 import { generateDesignTokens } from './tokens-generator.js';
 import { generateCode } from './code-generator.js';
 import { generateSOP } from './sop-generator.js';
+import { generateDesignKit } from './designkit-generator.js';
+import { generateFeatureBreakdown } from './feature-breakdown-generator.js';
 import {
   analyzeLayers,
   detectComponents,
@@ -245,7 +247,32 @@ app.post('/api/analyse-page', async (req, res) => {
     const accessibilityReport = await generateAccessibilityReport(nodes, tokens);
     
     console.log('6. Generating SOP document');
-    const sop = generateSOP(tokens);
+    const sop = await generateSOP(
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      nodes
+    );
+    
+    console.log('7. Generating DesignKit document');
+    const designKit = await generateDesignKit(
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      sop.fullDocument
+    );
+
+    console.log('8. Generating Feature Breakdown document');
+    const featureBreakdown = await generateFeatureBreakdown(
+      sop,
+      tokens,
+      analysis,
+      accessibilityReport,
+      components,
+      nodes
+    );
 
     const result: {
       success: boolean;
@@ -270,10 +297,33 @@ app.post('/api/analyse-page', async (req, res) => {
       };
       accessibility: any;
       sop: {
-        versionControl: string;
-        namingRules: string;
-        designToDevSteps: string;
-        complianceNotes: string;
+        title: string;
+        userJourney: {
+          userStories: string[];
+        };
+        featureBreakout: {
+          description: string;
+          features: any[];
+        };
+        lld: {
+          description: string;
+          diagrams: any[];
+        };
+        fullDocument: string;
+      };
+      designKit: {
+        title: string;
+        subtitle: string;
+        typography: any;
+        iconography: any;
+        spacingSystem: any;
+        colorSystem: any;
+        gridAndLayout: any;
+        fullDocument: string;
+      };
+      featureBreakdown: {
+        title: string;
+        features: any[];
         fullDocument: string;
       };
       outputPath?: string;
@@ -301,11 +351,26 @@ app.post('/api/analyse-page', async (req, res) => {
       },
       accessibility: accessibilityReport,
       sop: {
-        versionControl: sop.versionControl,
-        namingRules: sop.namingRules,
-        designToDevSteps: sop.designToDevSteps,
-        complianceNotes: sop.complianceNotes,
+        title: sop.title,
+        userJourney: sop.userJourney,
+        featureBreakout: sop.featureBreakout,
+        lld: sop.lld,
         fullDocument: sop.fullDocument,
+      },
+      designKit: {
+        title: designKit.title,
+        subtitle: designKit.subtitle,
+        typography: designKit.typography,
+        iconography: designKit.iconography,
+        spacingSystem: designKit.spacingSystem,
+        colorSystem: designKit.colorSystem,
+        gridAndLayout: designKit.gridAndLayout,
+        fullDocument: designKit.fullDocument,
+      },
+      featureBreakdown: {
+        title: featureBreakdown.title,
+        features: featureBreakdown.features,
+        fullDocument: featureBreakdown.fullDocument,
       },
     };
 
@@ -381,6 +446,20 @@ app.post('/api/analyse-page', async (req, res) => {
         'utf-8'
       );
       
+      // Save DesignKit document as markdown
+      fs.writeFileSync(
+        path.join(outputPath, 'DesignKit.md'),
+        designKit.fullDocument,
+        'utf-8'
+      );
+      
+      // Save Feature Breakdown document as markdown
+      fs.writeFileSync(
+        path.join(outputPath, 'feature-breakdown.md'),
+        featureBreakdown.fullDocument,
+        'utf-8'
+      );
+      
       console.log(`Results saved to: ${outputPath}`);
       
       // Add output path to response
@@ -395,6 +474,8 @@ app.post('/api/analyse-page', async (req, res) => {
         accessibilityReport: 'accessibility-report.json',
         components: 'components.json',
         namingSuggestions: 'naming-suggestions.json',
+        designKit: 'DesignKit.md',
+        featureBreakdown: 'feature-breakdown.md',
       };
     } catch (fileError) {
       console.error('Error saving files:', fileError);
